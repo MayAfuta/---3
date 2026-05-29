@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Rating Predictor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #2d2d2d;
+            position: relative;
+            overflow-x: hidden;
+            background: #f5e6d3;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/static/movie_bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: brightness(0.95);
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 245, 230, 0.45) 0%, rgba(255, 235, 215, 0.45) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            background: rgba(20, 20, 35, 0.92);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            border-radius: 24px;
+            padding: 45px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #dc2626, #b91c1c, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: #d1d5db;
+            font-size: 0.95rem;
+        }
+
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #dc2626, transparent);
+            margin: 15px auto 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #dc2626;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #dc2626;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+        }
+
+        select option {
+            background: #1f1f33;
+            color: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 38, 38, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 22px;
+            border-radius: 14px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: none;
+        }
+
+        #result.success {
+            display: block;
+            background: rgba(46, 204, 113, 0.15);
+            border: 2px solid #2ecc71;
+            color: #4ade80;
+        }
+
+        #result.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.15);
+            border: 2px solid #e74c3c;
+            color: #dc2626;
+            font-size: 1rem;
+        }
+
+        .rating-value {
+            font-size: 3rem;
+            display: block;
+            margin-top: 8px;
+            color: #4ade80;
+            text-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Movie Rating Predictor</h1>
+            <p class="subtitle">הזן את פרטי הסרט וקבל תחזית דירוג בזמן אמת</p>
+            <div class="divider"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="year">שנת יציאה (Release Year)</label>
+            <input type="number" id="year" placeholder="2024" min="1880" max="2030">
+        </div>
+
+        <div class="form-group">
+            <label for="runtime">אורך הסרט בדקות (Runtime)</label>
+            <input type="number" id="runtime" placeholder="120" min="1" max="500">
+        </div>
+
+        <div class="form-group">
+            <label for="genre">ז'אנר (Genre)</label>
+            <select id="genre">
+                <option value="Drama">Drama</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Romance">Romance</option>
+                <option value="Action">Action</option>
+                <option value="Documentary">Documentary</option>
+                <option value="Crime">Crime</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Horror">Horror</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Family">Family</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Biography">Biography</option>
+                <option value="History">History</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Music">Music</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="language">שפה (Language)</label>
+            <select id="language">
+                <option value="English">English</option>
+                <option value="French">French</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Unknown">Other / Unknown</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="country">מדינה (Country)</label>
+            <select id="country">
+                <option value="United States">United States</option>
+                <option value="India">India</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="France">France</option>
+                <option value="Italy">Italy</option>
+                <option value="Japan">Japan</option>
+                <option value="Canada">Canada</option>
+                <option value="Unknown">Other / Unknown</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="has_budget">האם יש תקציב ידוע? (Known Budget)</label>
+            <select id="has_budget">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <button onclick="predictRating()">🎯 Predict Rating</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function predictRating() {
+            const resultDiv = document.getElementById('result');
+
+            const data = {
+                year: document.getElementById('year').value,
+                runtime: document.getElementById('runtime').value,
+                genre: document.getElementById('genre').value,
+                language: document.getElementById('language').value,
+                country: document.getElementById('country').value,
+                has_budget: document.getElementById('has_budget').value
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    resultDiv.className = 'success';
+                    resultDiv.innerHTML = `Predicted Rating: <span class="rating-value">${result.predicted_rating} / 10</span>`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.innerHTML = `⚠️ ${result.error}`;
+                }
+            } catch (err) {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = '⚠️ שגיאה בחיבור לשרת. נסה שוב.';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
