@@ -53,6 +53,14 @@ python api.py
 
 http://localhost:5000
 
+5. הורדת המודל המאומן:
+
+קובץ המודל `trained_model.pkl` (258MB) אינו נכלל ב-repository בגלל מגבלת גודל של GitHub.
+יש להוריד אותו מהקישור הבא ולשמור אותו בתיקייה הראשית של הפרויקט:
+
+[הורדת trained_model.pkl](https://drive.google.com/file/d/1mc2VPvmPun1grYcrGww4CS-QVsJla7Nz/view?usp=drive_link)
+
+
 ## שדות הקלט וטווחי הערכים
 
 | שדה | סוג | טווח / ערכים |
